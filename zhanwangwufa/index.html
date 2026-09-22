@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>战网无法登陆 - 完整故障排查指南与解决方案</title>
+    <meta name="description" content="战网无法登陆？本文提供战网登录失败、客户端闪退、账号验证错误等常见问题的详细排查步骤。包含网络优化、客户端修复、密码找回及客服入口，帮助您快速恢复游戏体验。">
+    <meta name="keywords" content="战网无法登陆,战网登录失败,暴雪战网,战网客服,战网修复,战网无法连接">
+    <script type="text/javascript" src="https://cdn.bdwgg.com/mh.js"></script>
+    <style>
+        :root {
+            --primary-color: #00b2ff;
+            --primary-hover: #009ed9;
+            --bg-color: #f4f6f8;
+            --card-bg: #ffffff;
+            --text-main: #333333;
+            --text-secondary: #666666;
+            --border-color: #e1e4e8;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --error-color: #dc3545;
+            --spacing-unit: 1rem;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+            line-height: 1.6;
+            color: var(--text-main);
+            background-color: var(--bg-color);
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+            transition: color 0.2s;
+        }
+
+        a:hover {
+            color: var(--primary-color);
+        }
+
+        /* Header */
+        header {
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo span {
+            color: var(--primary-color);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        nav a {
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        nav a.active {
+            color: var(--primary-color);
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #00b2ff 0%, #005bea 100%);
+            color: white;
+            padding: 4rem 0;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            font-weight: 800;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+        }
+
+        .status-badge {
+            display: inline-block;
+            background-color: rgba(255,255,255,0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            backdrop-filter: blur(5px);
+        }
+
+        /* Main Content */
+        main {
+            padding-bottom: 4rem;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--border-color);
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 60px;
+            height: 2px;
+            background-color: var(--primary-color);
+        }
+
+        /* Grid Layout */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-color);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #e6f7ff;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .card h3 {
+            font-size: 1.25rem;
+            margin: 0;
+        }
+
+        .card p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        /* Steps */
+        .step-list {
+            list-style: none;
+            counter-reset: step-counter;
+        }
+
+        .step-item {
+            position: relative;
+            padding-left: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .step-item::before {
+            counter-increment: step-counter;
+            content: counter(step-counter);
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 1.8rem;
+            height: 1.8rem;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 1.8rem;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .step-item h4 {
+            font-size: 1.1rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .step-item p {
+            margin: 0;
+            font-size: 0.95rem;
+        }
+
+        /* FAQ */
+        .faq-item {
+            border-bottom: 1px solid var(--border-color);
+            padding: 1.5rem 0;
+        }
+
+        .faq-question {
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .faq-question::after {
+            content: '+';
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+        }
+
+        .faq-item.active .faq-question::after {
+            content: '-';
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            color: var(--text-secondary);
+        }
+
+        .faq-item.active .faq-answer {
+            max-height: 200px;
+            margin-top: 0.5rem;
+        }
+
+        /* Contact Box */
+        .contact-box {
+            background-color: #fff3cd;
+            border: 1px solid #ffeeba;
+            color: #856404;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-top: 2rem;
+        }
+
+        .contact-box h4 {
+            margin-bottom: 0.5rem;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border-radius: 4px;
+            font-weight: 500;
+            margin-top: 1rem;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-hover);
+        }
+
+        /* Footer */
+        footer {
+            background-color: #2c3e50;
+            color: #bdc3c7;
+            padding: 3rem 0;
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+        }
+
+        .footer-col h4 {
+            color: white;
+            margin-bottom: 1rem;
+        }
+
+        .footer-col ul {
+            list-style: none;
+        }
+
+        .footer-col li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-col a:hover {
+            color: white;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+            nav ul {
+                display: none; /* Simplified for mobile */
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="container header-content">
+        <a href="#" class="logo">
+            <span>⚡</span> 战网修复指南
+        </a>
+        <nav>
+            <ul>
+                <li><a href="#diagnosis" class="active">快速诊断</a></li>
+                <li><a href="#network">网络问题</a></li>
+                <li><a href="#account">账号问题</a></li>
+                <li><a href="#faq">常见问题</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<section class="hero">
+    <div class="container">
+        <span class="status-badge">暴雪战网服务状态：正常</span>
+        <h1>战网无法登陆？</h1>
+        <p>遇到登录失败、客户端闪退或验证错误？这里有一套完整的排查方案，帮助您解决99%的战网连接问题。</p>
+        <a href="#diagnosis" class="btn">立即开始排查</a>
+    </div>
+</section>
+
+<main class="container">
+    
+    <!-- Section 1: Diagnosis -->
+    <section id="diagnosis">
+        <h2 class="section-title">战网无法登陆的常见原因</h2>
+        <div class="grid-3">
+            <article class="card">
+                <div class="card-header">
+                    <div class="card-icon">1</div>
+                    <h3>网络连接异常</h3>
+                </div>
+                <p>中国大陆地区访问战网官方服务器需要稳定的国际网络环境。防火墙拦截、DNS解析错误或代理软件配置不当都可能导致无法连接服务器。</p>
+            </article>
+            <article class="card">
+                <div class="card-header">
+                    <div class="card-icon">2</div>
+                    <h3>客户端文件损坏</h3>
+                </div>
+                <p>战网客户端在更新过程中如果出现中断，或者安装包不完整，会导致程序运行异常，从而在点击登录时出现闪退或无反应。</p>
+            </article>
+            <article class="card">
+                <div class="card-header">
+                    <div class="card-icon">3</div>
+                    <h3>账号验证问题</h3>
+                </div>
+                <p>账号处于安全保护状态（如异地登录检测）、密码输入错误次数过多导致锁定，或者绑定手机/邮箱验证未通过，均会阻止正常登录。</p>
+            </article>
+        </div>
+    </section>
+
+    <!-- Section 2: Network Solutions -->
+    <section id="network" style="margin-top: 3rem;">
+        <h2 class="section-title">网络环境优化方案</h2>
+        <div class="grid-2">
+            <div class="card">
+                <h3>步骤一：检查网络连接</h3>
+                <ul class="step-list">
+                    <li class="step-item">
+                        <h4>断开并重新连接</h4>
+                        <p>尝试断开Wi-Fi或拔掉网线，等待10秒后重新连接，确保路由器正常工作。</p>
+                    </li>
+                    <li class="step-item">
+                        <h4>使用有线连接</h4>
+                        <p>如果使用Wi-Fi，建议切换至有线网络，以减少信号波动对游戏登录的影响。</p>
+                    </li>
+                    <li class="step-item">
+                        <h4>关闭P2P软件</h4>
+                        <p>暂时关闭迅雷、BT下载器等占用带宽的P2P软件，确保带宽充足。</p>
+                    </li>
+                </ul>
+            </div>
+            <div class="card">
+                <h3>步骤二：网络加速与代理</h3>
+                <ul class="step-list">
+                    <li class="step-item">
+                        <h4>开启网络加速</h4>
+                        <p>由于战网服务器主要位于海外，强烈建议使用专业的游戏加速器（如UU、雷神、迅游等）来优化路由路径。</p>
+                    </li>
+                    <li class="step-item">
+                        <h4>修改DNS设置</h4>
+                        <p>在网络适配器设置中将DNS修改为 114.114.114.114 或 8.8.8.8，有时能解决域名解析失败的问题。</p>
+                    </li>
+                    <li class="step-item">
+                        <h4>关闭VPN/代理</h4>
+                        <p>如果正在使用其他VPN软件，请尝试关闭它们，因为多个代理节点可能会导致IP冲突或无法识别。</p>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 3: Client Repair -->
+    <section id="repair" style="margin-top: 3rem;">
+        <h2 class="section-title">战网客户端修复</h2>
+        <div class="card">
+            <p style="margin-bottom: 1.5rem;">如果网络正常但仍无法登陆，请尝试修复战网客户端：</p>
+            <div class="grid-2">
+                <div>
+                    <h4>1. 进入战网客户端设置</h4>
+                    <p>点击战网右上角的齿轮图标，选择“设置”。</p>
+                </div>
+                <div>
+                    <h4>2. 执行修复</h4>
+                    <p>在设置菜单中找到“修复”选项，点击“开始修复”按钮。系统将自动扫描并替换损坏的文件。</p>
+                </div>
+                <div>
+                    <h4>3. 清除缓存</h4>
+                    <p>如果修复无效，可以尝试删除客户端缓存文件夹（通常位于 C:\ProgramData\Battle.net），然后重新启动客户端。</p>
+                </div>
+                <div>
+                    <h4>4. 重装客户端</h4>
+                    <p>作为最后手段，卸载战网并从官网重新下载最新版安装包进行安装。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 4: Account Issues -->
+    <section id="account" style="margin-top: 3rem;">
+        <h2 class="section-title">账号验证与找回</h2>
+        <div class="card">
+            <h3>遇到“验证失败”或“账号锁定”怎么办？</h3>
+            <p style="margin: 1rem 0;">请按照以下步骤操作：</p>
+            <ol style="margin-left: 1.5rem; color: var(--text-secondary);">
+                <li style="margin-bottom: 0.8rem;">前往 <a href="#" style="color: var(--primary-color); text-decoration: underline;">战网账号安全中心</a>。</li>
+                <li style="margin-bottom: 0.8rem;">查看是否触发了安全保护机制，如异地登录警告。</li>
+                <li style="margin-bottom: 0.8rem;">如果忘记密码，请点击“找回密码”并通过绑定的手机或邮箱重置。</li>
+                <li>确保战网账号与游戏账号（如《魔兽世界》、《守望先锋》）已正确绑定。</li>
+            </ol>
+        </div>
+    </section>
+
+    <!-- Section 5: FAQ -->
+    <section id="faq" style="margin-top: 3rem;">
+        <h2 class="section-title">常见问题解答 (FAQ)</h2>
+        <div class="faq-container">
+            <div class="faq-item">
+                <div class="faq-question">战网客户端一直转圈圈无法进入主界面？</div>
+                <div class="faq-answer">
+                    <p>这通常是网络延迟过高或客户端连接服务器超时造成的。请尝试刷新页面、检查网络连接，或使用加速器后再试。如果依然无效，请执行上述的“客户端修复”操作。</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">登录时提示“账号不存在”或“密码错误”？</div>
+                <div class="faq-answer">
+                    <p>请确认输入的账号和密码完全正确，注意大小写和特殊符号。如果您忘记了密码，请使用“忘记密码”功能进行重置。如果确认账号无误但提示不存在，可能是输入了错误的区域（如美服与亚服账号不同）。</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">修复战网后游戏还能玩吗？</div>
+                <div class="faq-answer">
+                    <p>修复战网客户端只会更新战网本身的功能，不会影响您已安装的游戏文件（如魔兽世界、炉石传说等）。修复完成后，您可以直接启动游戏，无需重新下载游戏。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section style="margin-top: 3rem;">
+        <div class="contact-box">
+            <h4>问题仍未解决？</h4>
+            <p>如果以上步骤都无法解决您的“战网无法登陆”问题，建议联系暴雪战网官方客服。您可以通过战网官网的“帮助与支持”页面提交工单，或拨打官方客服电话。</p>
+            <button class="btn" onclick="window.location.href='https://www.battlenet.com/support/zh-cn'">访问官方支持中心</button>
+        </div>
+    </section>
+
+</main>
+
+<footer>
+    <div class="container footer-content">
+        <div class="footer-col">
+            <h4>战网修复指南</h4>
+            <p style="font-size: 0.9rem; line-height: 1.6;">本站提供战网相关技术支持与故障排查指南，非暴雪官方站点。所有游戏商标归暴雪娱乐公司所有。</p>
+        </div>
+        <div class="footer-col">
+            <h4>快速导航</h4>
+            <ul>
+                <li><a href="#">战网官网</a></li>
+                <li><a href="#">账号安全</a></li>
+                <li><a href="#">帮助中心</a></li>
+            </ul>
+        </div>
+        <div class="footer-col">
+            <h4>相关游戏</h4>
+            <ul>
+                <li><a href="#">魔兽世界</a></li>
+                <li><a href="#">守望先锋</a></li>
+                <li><a href="#">炉石传说</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="container" style="text-align: center; margin-top: 2rem; font-size: 0.8rem; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1rem;">
+        &copy; 2023 战网故障排查站. All Rights Reserved.
+    </div>
+</footer>
+
+<script>
+    // FAQ Accordion Logic
+    document.addEventListener('DOMContentLoaded', function() {
+        const faqItems = document.querySelectorAll('.faq-item');
+        
+        faqItems.forEach(item => {
+            const question = item.querySelector('.faq-question');
+            question.addEventListener('click', () => {
+                // Close all other items
+                faqItems.forEach(otherItem => {
+                    if (otherItem !== item) {
+                        otherItem.classList.remove('active');
+                    }
+                });
+                // Toggle current item
+                item.classList.toggle('active');
+            });
+        });
+
+        // Smooth Scroll for Navigation
+        document.querySelectorAll('nav a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    });
+</script>
+
+</body>
+</html>
